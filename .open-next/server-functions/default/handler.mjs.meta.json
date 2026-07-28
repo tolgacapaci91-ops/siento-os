@@ -3758,12 +3758,12 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js": {
+    ".open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js": {
       "bytes": 322,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js": {
+    ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js": {
       "bytes": 322,
       "imports": [],
       "format": "cjs"
@@ -3927,14 +3927,14 @@
           "original": "/home/runner/work/siento-os/siento-os/.open-next/server-functions/default/.next/server/app/api/v1/categories/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/home/runner/work/siento-os/siento-os/.open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/home/runner/work/siento-os/siento-os/.open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/home/runner/work/siento-os/siento-os/.open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/v1/workshops/route_client-reference-manifest.js",
@@ -12902,10 +12902,10 @@
         ".open-next/server-functions/default/.next/server/app/api/v1/categories/route_client-reference-manifest.js": {
           "bytesInOutput": 477
         },
-        ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js": {
+        ".open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js": {
           "bytesInOutput": 477
         },
-        ".open-next/server-functions/default/.next/server/app/api/v1/user/stats/route_client-reference-manifest.js": {
+        ".open-next/server-functions/default/.next/server/app/api/v1/users/[id]/route_client-reference-manifest.js": {
           "bytesInOutput": 477
         },
         ".open-next/server-functions/default/.next/server/app/api/v1/workshops/route_client-reference-manifest.js": {
