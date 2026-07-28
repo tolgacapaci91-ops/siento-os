@@ -16,7 +16,7 @@ var define_IMAGES_QUALITIES_default = [75];
 // <define:__IMAGES_REMOTE_PATTERNS__>
 var define_IMAGES_REMOTE_PATTERNS_default = [{ protocol: "https", hostname: "^(?:^(?:images\\.unsplash\\.com)$)$", pathname: "^(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/?)$" }];
 
-// ../../../../AppData/Local/npm-cache/_npx/72a7346bab235e2f/node_modules/@opennextjs/aws/dist/utils/error.js
+// ../../../.npm/_npx/72a7346bab235e2f/node_modules/@opennextjs/aws/dist/utils/error.js
 function isOpenNextError(e) {
   try {
     return "__openNextInternal" in e;
@@ -25,7 +25,7 @@ function isOpenNextError(e) {
   }
 }
 
-// ../../../../AppData/Local/npm-cache/_npx/72a7346bab235e2f/node_modules/@opennextjs/aws/dist/adapters/logger.js
+// ../../../.npm/_npx/72a7346bab235e2f/node_modules/@opennextjs/aws/dist/adapters/logger.js
 function debug(...args) {
   if (globalThis.openNextDebug) {
     console.log(...args);
@@ -75,7 +75,7 @@ function getOpenNextErrorLogLevel() {
   }
 }
 
-// ../../../../AppData/Local/npm-cache/_npx/72a7346bab235e2f/node_modules/@opennextjs/cloudflare/dist/cli/templates/images.js
+// ../../../.npm/_npx/72a7346bab235e2f/node_modules/@opennextjs/cloudflare/dist/cli/templates/images.js
 async function handleImageRequest(requestURL, requestHeaders, env) {
   const parseResult = parseImageRequest(requestURL, requestHeaders);
   if (!parseResult.ok) {
