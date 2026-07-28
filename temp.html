@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheÇapacı YT Studio V3 - AI Ses Çeviri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { 'bg-dark': '#0f0f0f', 'bg-panel': '#282828', 'border-color': '#3f3f3f', 'yt-red': '#ff0000', 'text-main': '#f1f1f1', 'text-sec': '#aaaaaa' } } }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-dark: #0f0f0f;
+            --bg-panel: #282828;
+            --border-color: #3f3f3f;
+            --yt-red: #ff0000;
+            --text-main: #f1f1f1;
+            --text-sec: #aaaaaa;
+        }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; }
+        .yt-card { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .input-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--text-sec); margin-bottom: 12px; text-transform: uppercase; }
+
+        /* T2IBeatz Specific */
+        .voice-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+        @media (max-width: 768px) { .voice-layout { grid-template-columns: 1fr; } }
+        
+        .voice-left-panel { display: flex; flex-direction: column; gap: 24px; height: 100%; }
+        
+        .custom-dropdown { position: relative; width: 100%; }
+        .voice-dropdown { width: 100%; appearance: none; background: #121212; color: #fff; border: 1px solid #333; padding: 14px 16px; border-radius: 8px; font-size: 14px; outline: none; cursor: pointer; transition: 0.2s;}
+        .voice-dropdown:focus { border-color: var(--yt-red); }
+        .custom-dropdown-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #888; }
+
+        .style-instruction-container { flex: 1; display: flex; flex-direction: column; }
+        .style-box { flex: 1; display: flex; flex-direction: column; background: #121212; border: 1px solid #333; border-radius: 8px; padding: 0; overflow: hidden; min-height: 150px;}
+        .style-textarea { width: 100%; height: 100%; background: transparent; border: none; color: #f1f1f1; resize: none; padding: 16px; font-size: 14px; outline: none; }
+
+        .voice-right-panel { display: flex; flex-direction: column; height: 100%; }
+        .textarea-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; }
+        .modern-textarea { width: 100%; min-height: 350px; background: #121212; border: 1px solid #333; border-radius: 8px; padding: 24px; font-size: 16px; color: #fff; line-height: 1.6; resize: none; outline: none; transition: 0.2s;}
+        .modern-textarea:focus { border-color: var(--yt-red); }
+        .char-counter { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8); padding: 4px 10px; border-radius: 4px; font-size: 12px; color: #aaa; pointer-events: none; border: 1px solid #333;}
+
+        .studio-btn { background: var(--yt-red); color: white; border: none; padding: 16px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; font-size: 16px; text-transform: uppercase; margin-top: 16px;}
+        .studio-btn:hover { background: #cc0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,0,0,0.3); }
+
+        .audio-output-card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; animation: fadeIn 0.3s ease; }
+        .action-btn { background: #121212; border: 1px solid #333; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+        .action-btn:hover { border-color: #fff; background: #222;}
+        .fav-btn.active { color: var(--yt-red); border-color: var(--yt-red); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f0f0f; }
+        ::-webkit-scrollbar-thumb { background: #606060; border-radius: 4px; }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="yt-card mb-8 p-6 flex flex-col md:flex-row items-center justify-between gap-4 bg-[#1a1a1a]">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-900/40">
+                <i class="fa-solid fa-wand-magic-sparkles text-white text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-white">AI Ses Çeviri (T2IBeatz)</h1>
+                <p class="text-sm text-slate-400">Gemini 2.5 Flash Audio Engine ile metinlerinizi sese dönüştürün.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="voice-layout">
+        <!-- Sol Panel -->
+        <div class="voice-left-panel">
+            <div>
+                <label class="input-label"><i class="fa-regular fa-user text-red-500 text-base"></i> SES KARAKTERİ SEÇ</label>
+                <div class="custom-dropdown">
+                    <select class="voice-dropdown" id="voiceSelect">
+                        <option value="Kore">Kore (Kadın - Doğal)</option>
+                        <option value="Fenrir">Fenrir (Erkek - Derin)</option>
+                        <option value="Puck">Puck (Erkek - Enerjik)</option>
+                        <option value="Zephyr">Zephyr (Kadın - Sakin)</option>
+                        <option value="Charon">Charon (Erkek - Tok)</option>
+                        <option value="Aoede">Aoede (Kadın - Haber)</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down custom-dropdown-arrow"></i>
+                </div>
+            </div>
+
+            <div class="style-instruction-container">
+                <label class="input-label"><i class="fa-solid fa-sliders text-red-500 text-base"></i> STYLE INSTRUCTIONS</label>
+                <div class="style-box">
+                    <textarea class="style-textarea" placeholder="Sesin tonlaması, duygusu veya hızı hakkında talimatlar yazın...&#10;&#10;(Örn: Çok heyecanlı bir şekilde oku, aralarda duraksayarak fısılda vb.)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel -->
+        <div class="voice-right-panel">
+            <div class="yt-card flex flex-col flex-1 p-0 overflow-hidden mb-0">
+                <div class="p-4 border-b border-[#333] bg-[#1f1f1f]">
+                    <label class="input-label mb-0"><i class="fa-solid fa-pen-nib text-red-500 text-base"></i> METİN EDİTÖRÜ</label>
+                </div>
+                
+                <div class="textarea-wrapper">
+                    <textarea id="ttsTextarea" class="modern-textarea border-none rounded-none" placeholder="Seslendirmek istediğiniz metni buraya yazın..." oninput="updateCounter(this)"></textarea>
+                    <div class="char-counter"><span id="charCount">0</span> / 1000</div>
+                </div>
+            </div>
+
+            <button id="generateBtn" onclick="generateSimulatedVoice()" class="studio-btn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> SESE DÖNÜŞTÜR
+            </button>
+
+            <!-- Output Area (Hidden initially) -->
+            <div id="audioOutputCard" class="audio-output-card hidden">
+                <div class="flex items-center gap-4">
+                    <button onclick="playAudio()" class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white hover:bg-red-700 transition-colors shadow-lg">
+                        <i class="fa-solid fa-play ml-1"></i>
+                    </button>
+                    <div>
+                        <div class="text-sm font-bold text-white mb-1 uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-green-500"></i> İşlem Başarılı
+                        </div>
+                        <div class="h-6 w-48 bg-[#121212] rounded overflow-hidden flex items-center gap-1 px-1">
+                            <!-- Fake Waveform -->
+                            <div class="w-1 bg-red-500 h-[40%] rounded-full animate-pulse"></div>
+                            <div class="w-1 bg-red-500 h-[80%] rounded-full animate-pulse" style="animation-delay: 100ms"></div>
+                            <div class="w-1 bg-red-500 h-[30%] rounded-full animate-pulse" style="animation-delay: 200ms"></div>
+                            <div class="w-1 bg-red-500 h-[90%] rounded-full animate-pulse" style="animation-delay: 300ms"></div>
+                            <div class="w-1 bg-red-500 h-[50%] rounded-full animate-pulse" style="animation-delay: 400ms"></div>
+                            <div class="w-1 bg-red-500 h-[70%] rounded-full animate-pulse" style="animation-delay: 500ms"></div>
+                            <div class="w-1 bg-red-500 h-[20%] rounded-full animate-pulse" style="animation-delay: 600ms"></div>
+                            <div class="w-1 bg-red-500 h-[100%] rounded-full animate-pulse" style="animation-delay: 700ms"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleFavorite(this)" class="action-btn fav-btn">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button onclick="alert('Demo sürümünde indirme aktif değildir.')" class="action-btn">
+                        <i class="fa-solid fa-download"></i> İNDİR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateCounter(element) {
+        const count = element.value.length;
+        document.getElementById('charCount').innerText = count;
+        if(count > 1000) {
+            element.value = element.value.substring(0, 1000);
+            document.getElementById('charCount').innerText = 1000;
+        }
+    }
+
+    function toggleFavorite(btn) {
+        btn.classList.toggle('active');
+        if (btn.classList.contains('active')) {
+            alert("Ses favorilere eklendi!");
+        } else {
+            alert("Ses favorilerden çıkarıldı.");
+        }
+    }
+
+    function generateSimulatedVoice() {
+        const text = document.getElementById('ttsTextarea').value;
+        if(!text) { alert("Lütfen bir metin girin."); return; }
+
+        const btn = document.getElementById('generateBtn');
+        const output = document.getElementById('audioOutputCard');
+
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> SES OLUŞTURULUYOR...`;
+        btn.disabled = true;
+        output.classList.add('hidden');
+
+        // Simulate processing time
+        setTimeout(() => {
+            btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> SESE DÖNÜŞTÜR`;
+            btn.disabled = false;
+            output.classList.remove('hidden');
+        }, 2000);
+    }
+
+    // Add Text-to-Speech logic using Web Speech API
+    function playAudio() {
+        const text = document.getElementById('ttsTextarea').value;
+        if (!text) return;
+
+        // Cancel any currently playing speech
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'tr-TR';
+        
+        const voiceSelect = document.getElementById('voiceSelect').value;
+        
+        // Slightly tweak pitch/rate for fun, to simulate different characters
+        if (voiceSelect === 'Fenrir' || voiceSelect === 'Charon') {
+            utterance.pitch = 0.5; // Deep voice
+        } else if (voiceSelect === 'Puck') {
+            utterance.rate = 1.2; // Fast, energetic
+            utterance.pitch = 1.2;
+        } else if (voiceSelect === 'Zephyr') {
+            utterance.pitch = 0.8;
+            utterance.rate = 0.9; // Calm
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+</script>
+
+</body>
+</html>
