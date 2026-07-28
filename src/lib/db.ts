@@ -31,6 +31,8 @@ import {
   QuizResult,
 } from "@/types/database";
 
+import defaultDbData from "../../.data/db.json";
+
 export interface DatabaseSchema {
   categories: CategoryItem[];
   courses: Course[];
@@ -55,29 +57,16 @@ export interface DatabaseSchema {
 const DB_DIR = path ? path.join(process.cwd(), ".data") : ".data";
 const DB_FILE = path ? path.join(DB_DIR, "db.json") : ".data/db.json";
 
-const INITIAL_DB: DatabaseSchema = {
-  categories: [],
-  courses: [],
-  course_sections: [],
-  lessons: [],
-  documents: [],
-  workshops: [],
-  users: [],
-  badges: [],
-  user_badges: [],
-  xp_logs: [],
-  course_progress: [],
-  lesson_progress: [],
-  useful_sites: [],
-  audit_logs: [],
-  notifications: [],
-  quizzes: [],
-  questions: [],
-  quiz_results: [],
-};
+// Deep copy the imported JSON to prevent mutations on the static import
+const INITIAL_DB: DatabaseSchema = JSON.parse(JSON.stringify(defaultDbData)) as DatabaseSchema;
+
+let memoryDb: DatabaseSchema | null = null;
 
 function ensureDbExists(): DatabaseSchema {
-  if (!fs) return INITIAL_DB; // Skip execution if fs is not available (e.g. Cloudflare Worker)
+  if (!fs) {
+    if (!memoryDb) memoryDb = JSON.parse(JSON.stringify(INITIAL_DB));
+    return memoryDb!;
+  }
 
   if (!fs.existsSync(DB_DIR)) {
     fs.mkdirSync(DB_DIR, { recursive: true });
@@ -122,7 +111,10 @@ export function readDb(): DatabaseSchema {
 }
 
 export function writeDb(data: DatabaseSchema): void {
-  if (!fs) return; // Skip if fs is not available (Cloudflare Worker)
+  if (!fs) {
+    memoryDb = JSON.parse(JSON.stringify(data));
+    return; // Skip if fs is not available (Cloudflare Worker)
+  }
   
   if (!fs.existsSync(DB_DIR)) {
     fs.mkdirSync(DB_DIR, { recursive: true });

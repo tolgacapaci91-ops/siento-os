@@ -94,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Fallback for demo admin/student account on Cloudflare Workers (where DB is empty)
         if (email === "tolga@sientoops.com" || email === "admin@sientoops.com" || foundUser) {
-          const userObj = foundUser || { ...MOCK_USER, email, role: email?.includes("admin") ? "admin" : "student" };
+          const userObj = foundUser || { ...MOCK_USER, email: email || "", role: email?.includes("admin") ? "admin" : "student" };
           
           if (!foundUser && password !== "password123") {
             alert("Hatalı e-posta veya şifre!");
