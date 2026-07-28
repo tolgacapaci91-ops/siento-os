@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "powershell ./deploy.ps1"
+    "build:worker": "next build && npx @opennextjs/cloudflare build",
+    "deploy": "npm run build:worker && wrangler deploy"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^2.20.0",

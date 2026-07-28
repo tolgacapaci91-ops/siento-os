@@ -1,5 +1,16 @@
-import fs from "fs";
-import path from "path";
+// Isolate fs and path from Cloudflare Worker / Edge bundlers
+let fs: any = null;
+let path: any = null;
+
+try {
+  // Use eval to prevent bundlers like esbuild/webpack from statically analyzing and failing the edge build
+  if (typeof process !== "undefined" && process.versions && process.versions.node) {
+    fs = eval('require("fs")');
+    path = eval('require("path")');
+  }
+} catch (e) {
+  // Not in Node.js environment
+}
 import {
   Course,
   Lesson,
@@ -41,8 +52,8 @@ export interface DatabaseSchema {
   quiz_results: QuizResult[];
 }
 
-const DB_DIR = path.join(process.cwd(), ".data");
-const DB_FILE = path.join(DB_DIR, "db.json");
+const DB_DIR = path ? path.join(process.cwd(), ".data") : ".data";
+const DB_FILE = path ? path.join(DB_DIR, "db.json") : ".data/db.json";
 
 const INITIAL_DB: DatabaseSchema = {
   categories: [],
@@ -66,6 +77,8 @@ const INITIAL_DB: DatabaseSchema = {
 };
 
 function ensureDbExists(): DatabaseSchema {
+  if (!fs) return INITIAL_DB; // Skip execution if fs is not available (e.g. Cloudflare Worker)
+
   if (!fs.existsSync(DB_DIR)) {
     fs.mkdirSync(DB_DIR, { recursive: true });
   }
@@ -109,6 +122,8 @@ export function readDb(): DatabaseSchema {
 }
 
 export function writeDb(data: DatabaseSchema): void {
+  if (!fs) return; // Skip if fs is not available (Cloudflare Worker)
+  
   if (!fs.existsSync(DB_DIR)) {
     fs.mkdirSync(DB_DIR, { recursive: true });
   }
