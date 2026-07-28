@@ -57,14 +57,16 @@ export interface DatabaseSchema {
 const DB_DIR = path ? path.join(process.cwd(), ".data") : ".data";
 const DB_FILE = path ? path.join(DB_DIR, "db.json") : ".data/db.json";
 
-// Deep copy the imported JSON to prevent mutations on the static import
-const INITIAL_DB: DatabaseSchema = JSON.parse(JSON.stringify(defaultDbData)) as DatabaseSchema;
-
 let memoryDb: DatabaseSchema | null = null;
 
 function ensureDbExists(): DatabaseSchema {
   if (!fs) {
-    if (!memoryDb) memoryDb = JSON.parse(JSON.stringify(INITIAL_DB));
+    if (!memoryDb) {
+      // Lazy load and clone to avoid module-level CPU overhead in Workers
+      memoryDb = (typeof structuredClone !== "undefined")
+        ? structuredClone(defaultDbData) as DatabaseSchema
+        : JSON.parse(JSON.stringify(defaultDbData)) as DatabaseSchema;
+    }
     return memoryDb!;
   }
 
@@ -73,8 +75,8 @@ function ensureDbExists(): DatabaseSchema {
   }
 
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(INITIAL_DB, null, 2), "utf-8");
-    return INITIAL_DB;
+    fs.writeFileSync(DB_FILE, JSON.stringify(defaultDbData, null, 2), "utf-8");
+    return JSON.parse(JSON.stringify(defaultDbData));
   }
 
   try {
@@ -101,8 +103,8 @@ function ensureDbExists(): DatabaseSchema {
       quiz_results: parsed.quiz_results || [],
     };
   } catch (err) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(INITIAL_DB, null, 2), "utf-8");
-    return INITIAL_DB;
+    fs.writeFileSync(DB_FILE, JSON.stringify(defaultDbData, null, 2), "utf-8");
+    return JSON.parse(JSON.stringify(defaultDbData));
   }
 }
 
@@ -112,8 +114,10 @@ export function readDb(): DatabaseSchema {
 
 export function writeDb(data: DatabaseSchema): void {
   if (!fs) {
-    memoryDb = JSON.parse(JSON.stringify(data));
-    return; // Skip if fs is not available (Cloudflare Worker)
+    // In Edge Worker, just assign the reference for fast in-memory mutation, 
+    // avoiding expensive CPU operations.
+    memoryDb = data;
+    return;
   }
   
   if (!fs.existsSync(DB_DIR)) {
