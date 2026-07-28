@@ -1,0 +1,37 @@
+name: Build OpenNext for Cloudflare Workers
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci || npm install --legacy-peer-deps
+        
+      - name: Build Worker (Linux)
+        run: npm run build:worker
+        
+      - name: Commit and push build output
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b build-output
+          git add .open-next -f
+          git commit -m "chore: add build artifacts from Linux CI"
+          git push origin build-output --force
