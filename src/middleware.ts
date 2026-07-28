@@ -38,6 +38,9 @@ export function middleware(request: NextRequest) {
   // 3. Determine target application subdomain
   let subdomain = "marketing";
 
+  const isWorkersDev = host.includes("workers.dev");
+  const academyPaths = ["/dashboard", "/workshops", "/courses", "/documents", "/useful-sites", "/favorites", "/profile", "/certificates", "/settings"];
+
   if (
     host.startsWith("admin.") ||
     host === "admin.sientoops.com"
@@ -47,7 +50,8 @@ export function middleware(request: NextRequest) {
     host.startsWith("academy.") ||
     host.startsWith("egitim.") ||
     host === "academy.sientoops.com" ||
-    host === "egitim.sientoops.com"
+    host === "egitim.sientoops.com" ||
+    (isWorkersDev && academyPaths.some(p => path === p || path.startsWith(`${p}/`)))
   ) {
     subdomain = "academy";
   }
