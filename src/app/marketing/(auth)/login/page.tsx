@@ -17,16 +17,10 @@ export default function LoginPage() {
     e.preventDefault();
     const success = await login(email, password);
     if (success) {
-      const isProduction = typeof window !== "undefined" && window.location.hostname.includes("sientoops.com");
-      
       if (email.includes("admin")) {
-        window.location.href = isProduction
-          ? "https://admin.sientoops.com/dashboard"
-          : "http://admin.localhost:3000/dashboard";
+        window.location.href = "/admin/dashboard";
       } else {
-        window.location.href = isProduction
-          ? "https://academy.sientoops.com/dashboard"
-          : "http://academy.localhost:3000/dashboard";
+        window.location.href = "/academy/dashboard";
       }
     }
   };

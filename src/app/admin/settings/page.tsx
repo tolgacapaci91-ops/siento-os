@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 export default function AdminSettingsPage() {
-  const [apiUrl, setApiUrl] = useState("http://localhost:8000/api/v1");
+  const [apiUrl, setApiUrl] = useState("https://api.sientoops.com/v1");
   const [dbStatus, setDbStatus] = useState("Connected (PostgreSQL 16)");
   const [saved, setSaved] = useState(false);
 

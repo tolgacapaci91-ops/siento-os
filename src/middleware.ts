@@ -40,17 +40,14 @@ export function middleware(request: NextRequest) {
 
   if (
     host.startsWith("admin.") ||
-    host === "admin.sientoops.com" ||
-    host === "admin.localhost"
+    host === "admin.sientoops.com"
   ) {
     subdomain = "admin";
   } else if (
     host.startsWith("academy.") ||
     host.startsWith("egitim.") ||
     host === "academy.sientoops.com" ||
-    host === "egitim.sientoops.com" ||
-    host === "academy.localhost" ||
-    host === "egitim.localhost"
+    host === "egitim.sientoops.com"
   ) {
     subdomain = "academy";
   }

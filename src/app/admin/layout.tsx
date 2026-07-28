@@ -41,10 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Bildirim Gönder", href: "/admin/notifications", icon: Bell },
   ];
 
-  const academyHostUrl =
-    typeof window !== "undefined" && window.location.hostname.includes("sientoops.com")
-      ? "https://academy.sientoops.com/dashboard"
-      : "http://academy.localhost:3000/dashboard";
+  const academyHostUrl = "/academy/dashboard";
 
   return (
     <div className="min-h-screen flex bg-[var(--background)]">

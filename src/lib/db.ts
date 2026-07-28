@@ -135,7 +135,7 @@ export function addAuditLog(
   action: string,
   entity_type: string,
   entity_id: string,
-  ip_address: string = "127.0.0.1"
+  ip_address: string = "unknown"
 ) {
   const db = readDb();
   if (!db.audit_logs) db.audit_logs = [];
